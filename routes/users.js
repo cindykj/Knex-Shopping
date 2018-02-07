@@ -4,14 +4,33 @@ const router = express.Router();
 const knex = require('../knex/knex.js');
 
 
+router.get('/:user_id', (req, res) => {
+  let id = req.params.user_id;
+  return knex.raw(`SELECT * FROM users WHERE id in (?)`, [id]) // 1st ? refers to 1st item in array
+    .then((result) => {
+      if (result.rows.length) {
+        return res.json(result.rows[0]) // 'do the work' occurs; rows' is array
+      } else {
+        throw new Error(`User not found`);
+      }
+    })
+    .catch(err => {
+      return res.status(400).json({'message': err.message})
+    })
+}) // closing for get /:user id
+
 router.post('/register', (req, res) => {
   //deconstruct validation
-  let {email, password} = req.body; // let email = req.body.email; let password = req.body.email; // same as looking for {} above
+  let {
+    email,
+    password
+  } = req.body; // let email = req.body.email; let password = req.body.email; // same as looking for {} above
   if (!(email && password)) { // or this (!email || !password)
-    return res.status(400).json({message: `Missing email or password`});
+    return res.status(400).json({
+      message: `Missing email or password`
+    });
   }
   email = email.toLowerCase();
-
   // check if user exists
   return knex.raw(`SELECT * FROM users WHERE email = ?`, [email])
     .then(result => {
@@ -27,25 +46,14 @@ router.post('/register', (req, res) => {
       return res.json(result.rows[0]);
     })
     .catch(err => { //email
-      return res.status(400).json({'message': err.message});
+      return res.status(400).json({
+        'message': err.message
+      });
     })
 })
 
 
 
-// router
-// .get('/:user_id', (req, res) => {
-//   let id = req.params.user_id;
-//   knex.raw(`SELECT * FROM user WHERE id = ?`, [id]) // 1st ? refers to 1st item in array
-//     .then((result) => {
-//       res.json(result.rows[0]) // 'do the work' occurs; rows' is array
-//     })
-//     .catch(error => {
-//       console.log({
-//         'message': 'User not found'
-//       })
-//     })
-// }) // closing for get /:user id
 
 // .post('/login', (req, res) => {
 //   let email = req.body.email;
