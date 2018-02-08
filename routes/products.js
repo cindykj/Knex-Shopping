@@ -4,7 +4,7 @@ const router = express.Router();
 const knex = require('../knex/knex.js');
 
 // GET ALL PRODUCTS
-router.get('/', (req, res) => {
+router.get ('/', (req, res) => {
   return knex.raw(`SELECT * FROM products`)
   .then(result => {
     if (result.rows.length) {
@@ -20,7 +20,7 @@ router.get('/', (req, res) => {
 })
 
 // GET PRODUCT ID
-router.get('/:product_id', (req, res) => {
+router.get ('/:product_id', (req, res) => {
   let id = req.params.product_id;
   return knex.raw(`SELECT * FROM products WHERE id in (?)`, [id])
   .then(result => {
@@ -38,7 +38,7 @@ router.get('/:product_id', (req, res) => {
 
 
 // POST PRODUCT
-router.post(`/new`, (req, res) => {
+router.post (`/new`, (req, res) => {
   let {title, description, inventory, price} = req.body; 
   if (!(title || !description || !inventory || !price)) { // or this (!email || !password)
     return res.status(400).json({message: `Must POST all product fields`});
@@ -64,6 +64,22 @@ router.post(`/new`, (req, res) => {
     return res.status(400).json ({ 'message': err.message })
   })
 });
+
+// PUT UPDATE PRODUCT
+router.put (`/:product_id`, (req, res) => {
+  let id = req.params.product_id;
+  let {title, description, inventory, price} = req.body
+  return knex.raw(`UPDATE products SET title = (?), description = (?), inventory = (?), price = (?), updated_at = (?) WHERE id = (?) RETURNING *`, [title, description, inventory, price, 'now()', id])
+  .then(result => {
+    if (result.rows.length) {
+      return result
+    }
+  })
+
+  .then(updatedProduct => {
+    res.json ({ message: `Product: ${id} has been updated!`})
+  })
+})
 
 
 module.exports = router;

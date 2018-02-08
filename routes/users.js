@@ -37,6 +37,7 @@ router.post('/login', (req, res) => {
         throw new Error(`User not found`);
       }
     })
+
     .then(fetchedUser => {
       console.log(password)
       console.log(fetchedUser)
@@ -46,6 +47,7 @@ router.post('/login', (req, res) => {
         throw new Error(`Incorrect password`);
       }
     })
+
     .catch(err => { //user not found
       return res.status(400).json({ 'message': err.message })
     })
@@ -72,12 +74,15 @@ router.post('/register', (req, res) => {
       }
       return result;
     })
+
     .then(newUser => { // like 'development' branch, must add 'return' to knex to connect to master branch
       return knex.raw(`INSERT INTO users (email, password) VALUES (?, ?) RETURNING *`, [email, password])
     })
+
     .then(newUser => {
       return res.json(newUser.rows[0]);
     })
+
     .catch(err => { //email
       return res.status(400).json({
         'message': err.message
@@ -96,10 +101,11 @@ router.put('/:user_id/forgot-password', (req, res) => {
       return result
     }
   })
+
   .then(updatedPW => {
-    console.log(password)
     res.json({ message: 'New password created!'})
   })
+
   .catch(err => {
     return res.status(400).json ({ 'message': err.message })
   })
