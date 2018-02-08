@@ -93,7 +93,6 @@ router.post('/register', (req, res) => {
 router.put('/:user_id/forgot-password', (req, res) => {
   let id = req.params.user_id;
   let password = req.body.password;
-
   return knex.raw(`UPDATE users SET password = (?), updated_at = (?) WHERE id = (?) RETURNING *`, [password, 'now()', id])
   .then(result => {
     if (result.rows.length) {
