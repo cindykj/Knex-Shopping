@@ -10,7 +10,8 @@ module.exports = {
       user : 'knex_shopping_user',
       password : 'password',
       database : 'knex_shopping_db',
-      charset: 'utf8'
+      charset: 'utf8',
+      debug: true, // can turn off, will show query details
     },
     migrations: {
       directory: __dirname + '/knex/migrations',
