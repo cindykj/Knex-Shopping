@@ -4,12 +4,11 @@ const router = express.Router();
 const knex = require('../knex/knex.js');
 
 // GET PRODUCT
-router.get('/products', (req, res) => {
+router.get('/', (req, res) => {
   return knex.raw(`SELECT * FROM products`)
   .then(result => {
     if (result.rows.length) {
-      console.log(result)
-      return res.json(result)
+      return res.json(result.rows)
     } else {
       throw new Error(`There are no products!`)
     }
