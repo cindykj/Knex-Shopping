@@ -22,8 +22,6 @@ app.use('/users', usersRoute); // is mounting to http://localhost:300/users
 app.use('/products', productsRoute);
 app.use('/cart', cartRoutes);
 
-
-
 // Listening
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);

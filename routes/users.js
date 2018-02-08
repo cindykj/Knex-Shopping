@@ -3,6 +3,7 @@ const router = express.Router();
 
 const knex = require('../knex/knex.js');
 
+// GET USER ID
 router.get('/:user_id', (req, res) => {
   let id = req.params.user_id;
   return knex.raw(`SELECT * FROM users WHERE id in (?)`, [id]) // 1st ? refers to 1st item in array
@@ -20,6 +21,7 @@ router.get('/:user_id', (req, res) => {
     })
 }) // closing for get /:user id
 
+//  LOGIN USER
 router.post('/login', (req, res) => {
   // let id = req.params.user_id;
   let email = req.body.email;
@@ -49,6 +51,7 @@ router.post('/login', (req, res) => {
     })
 }) // closing for post /login
 
+// REGISTER USER
 router.post('/register', (req, res) => {
   //deconstruct validation
   let {
@@ -81,11 +84,11 @@ router.post('/register', (req, res) => {
       });
     })
 })
-
-router.post('/:user_id/forgot-password', (req, res) => {
+// FORGOT PASSWORD
+router.put('/:user_id/forgot-password', (req, res) => {
   let id = req.params.user_id;
   let password = req.body.password;
-  let updated = req.body.updated_at;
+
   return knex.raw(`UPDATE users SET password = (?), updated_at = (?) WHERE id = (?) RETURNING *`, [password, 'now()', id])
   .then(result => {
     console.log('HERES DA', result)
@@ -95,14 +98,14 @@ router.post('/:user_id/forgot-password', (req, res) => {
   })
   .then(updatedPW => {
     console.log(password)
-    return res.json({ message: 'New password created!'})
+    res.json({ message: 'New password created!'})
   })
   .catch(err => {
     return res.status(400).json ({ 'message': err.message })
   })
 }); // closing for post :user_id/forgot-password
 
-// DELETE
+// DELETE USER 
 router.delete('/:user_id', (req, res) => {
   let id = req.params.user_id;
   return knex.raw(`DELETE FROM users WHERE id = (?)`, [id])
@@ -115,8 +118,6 @@ router.delete('/:user_id', (req, res) => {
     }
   })
 }) // closing for delete user id
-
-
 
 
 module.exports = router;
