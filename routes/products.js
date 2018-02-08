@@ -81,5 +81,18 @@ router.put (`/:product_id`, (req, res) => {
   })
 })
 
+// DELETE PRODUCT
+router.delete('/:product_id', (req, res) => {
+  let id = req.params.product_id;
+  return knex.raw(`DELETE FROM products WHERE id = (?)`, [id])
+  .then(deleted => {
+    if (deleted.rowCount === 0) {
+      res.json({ message: `Product not found`})
+    } else {
+      return res.json({ message: `Product id: ${id} successfully deleted.`})
+    }
+  })
+}) // closing for delete product id
+
 
 module.exports = router;

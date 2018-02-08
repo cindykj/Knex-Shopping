@@ -96,7 +96,6 @@ router.put('/:user_id/forgot-password', (req, res) => {
 
   return knex.raw(`UPDATE users SET password = (?), updated_at = (?) WHERE id = (?) RETURNING *`, [password, 'now()', id])
   .then(result => {
-    console.log('HERES DA', result)
     if (result.rows.length) {
       return result
     }
@@ -116,7 +115,6 @@ router.delete('/:user_id', (req, res) => {
   let id = req.params.user_id;
   return knex.raw(`DELETE FROM users WHERE id = (?)`, [id])
   .then(deleted => {
-    console.log(deleted)
     if (deleted.rowCount === 0) {
       res.json({ message: `User not found`})
     } else {
