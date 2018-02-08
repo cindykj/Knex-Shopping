@@ -95,14 +95,26 @@ router.post('/:user_id/forgot-password', (req, res) => {
   })
   .then(updatedPW => {
     console.log(password)
-    return res.json({ message: 'New password created'})
+    return res.json({ message: 'New password created!'})
   })
   .catch(err => {
     return res.status(400).json ({ 'message': err.message })
   })
 }); // closing for post :user_id/forgot-password
 
-
+// DELETE
+router.delete('/:user_id', (req, res) => {
+  let id = req.params.user_id;
+  return knex.raw(`DELETE FROM users WHERE id = (?)`, [id])
+  .then(deleted => {
+    console.log(deleted)
+    if (deleted.rowCount === 0) {
+      res.json({ message: `User not found`})
+    } else {
+      return res.json({ message: `User id: ${id} successfully deleted.`})
+    }
+  })
+}) // closing for delete user id
 
 
 
