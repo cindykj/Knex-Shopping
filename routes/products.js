@@ -3,7 +3,7 @@ const router = express.Router();
 
 const knex = require('../knex/knex.js');
 
-// GET PRODUCT
+// GET ALL PRODUCTS
 router.get('/', (req, res) => {
   return knex.raw(`SELECT * FROM products`)
   .then(result => {
@@ -20,6 +20,21 @@ router.get('/', (req, res) => {
 })
 
 // GET PRODUCT ID
+router.get('/:product_id', (req, res) => {
+  let id = req.params.product_id;
+  return knex.raw(`SELECT * FROM products WHERE id in (?)`, [id])
+  .then(result => {
+    if (result.rows.length) {
+      return res.json(result.rows[0])
+    } else {
+      throw new Error(`Product not found`)
+    }
+  })
+
+  .catch(err => {
+    return res.status(404).json ({ 'message': err.message })
+  })
+}) //closing for get product id
 
 
 // POST PRODUCT
